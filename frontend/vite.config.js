@@ -13,6 +13,16 @@ export default defineConfig({
             '@/': `${path.resolve(__dirname, 'src')}/`
         }
     },
+        server: {
+            proxy: {
+                '/api': {
+                            // In development, proxy API calls to the backend-dev service
+                            target: 'http://backend-dev:8000',
+                    changeOrigin: true,
+                    secure: false,
+                }
+            }
+        },
     define: {
       __VUE_PROD_HYDRATION_MISMATCH_DETAILS__: false,
       __VUE_OPTIONS_API__: true,

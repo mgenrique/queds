@@ -16,6 +16,15 @@ RUN pip install --upgrade pip && \
     pip install --no-cache-dir -r requirements.txt
 
 
+# Development stage (includes developer tooling such as debugpy, curl and procps)
+FROM base AS dev
+
+RUN apt-get update && \
+    apt-get -y install --no-install-recommends curl procps && \
+    rm -rf /var/lib/apt/lists/* && \
+    pip install --no-cache-dir debugpy
+
+
 # API stage
 FROM base AS api
 

@@ -321,6 +321,9 @@
         </chart-card>
       </div-->
     </div>
+    <div class="overview-footer text-center mt-4">
+      <small v-if="app_version">{{ app_version }}</small>
+    </div>
   </div>
 </template>
 
@@ -369,6 +372,8 @@ export default {
 
       // global stats
       fiat: 0,
+      // application version fetched from backend
+      app_version: '',
       total_wallet_value: 0,
       total_wallet_cost: 0,
       total_realized_profit: 0,
@@ -469,6 +474,7 @@ export default {
         "datasets": [{"data": [1, 99]}]
       }
       await this.getData();
+      await this.fetchVersion();
       await this.fetchAllBrokerOrders();
       await this.setupPerformanceChart();
       await this.setupTopMovers();
@@ -1046,6 +1052,16 @@ export default {
         this.fillTotalStats();
       } catch (error) {
         console.error("Error fetching data:", error);
+      }
+    }
+    ,
+    async fetchVersion() {
+      try {
+        // import.meta.env.VITE_APP_BACKEND_URL is usually "/api" in development
+        const res = await axios.get(import.meta.env.VITE_APP_BACKEND_URL + "/version");
+        this.app_version = String(res.data || '').trim();
+      } catch (e) {
+        this.app_version = '';
       }
     }
   },

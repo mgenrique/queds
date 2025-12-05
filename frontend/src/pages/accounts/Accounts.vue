@@ -259,6 +259,7 @@ export default {
       crowdAccounts: [],
       selectedEntityAllowsCsv: false,
       entities: [],
+      allEntities: [],
       entity_credentials: [],
       loading: false,
       inputMethod: 'api'
@@ -266,6 +267,7 @@ export default {
   },
   created() {
     this.getData()
+    this.getEntities()
   },
   watch: {
     credential: {
@@ -356,7 +358,7 @@ export default {
       if (!this.credential.currency) {
         this.errors.currency = 'The currency is required';
       }
-      if (!this.credential.parameters.length && this.inputMethod === 'api' && this.credential.id == undefined) {
+      if ((Object.keys(this.credential.parameters).length === 0) && this.inputMethod === 'api' && this.credential.id == undefined) {
         this.errors.parameters = 'Credentials are required';
       }
       if (!this.credential.encrypt_password && this.inputMethod === 'api' && this.credential.id == undefined) {
@@ -403,7 +405,7 @@ export default {
         "parameters": parameters,
         "encrypt_password": this.credential.encrypt_password
       }
-      if (this.credential.parameters.length) {
+      if (Object.keys(this.credential.parameters).length) {
         await axios.post(import.meta.env.VITE_APP_BACKEND_URL + "/entities/accounts/" + account.id + '/credentials', data).then(this.checkCredential);
       }
       await this.getData()
@@ -427,15 +429,17 @@ export default {
         this.inputMethod = account.allows_csv ? 'manual' : 'api';
       }
       this.errors = [];
-      this.entities = [];
       let vm = this;
-      await axios.get(import.meta.env.VITE_APP_BACKEND_URL + "/entities/").then(function (res) {
-        res.data.forEach(function (e) {
-          if (e.type == account_type) {
-            vm.entities.push(e);
-          }
+      // If we have cached all entities, filter locally to avoid network race conditions
+      if (this.allEntities && this.allEntities.length) {
+        this.entities = this.allEntities.filter(e => e.type == account_type);
+      } else {
+        this.entities = [];
+        await axios.get(import.meta.env.VITE_APP_BACKEND_URL + "/entities/").then(function (res) {
+          vm.allEntities = res.data;
+          vm.entities = res.data.filter(e => e.type == account_type);
         });
-      });
+      }
     },
     handleClose() {
       this.dialogVisible = false;
@@ -484,7 +488,13 @@ export default {
       await axios.get(import.meta.env.VITE_APP_BACKEND_URL + "/entities/accounts").then(this.fillAccounts);
     },
     async getEntities() {
-      await axios.get(import.meta.env.VITE_APP_BACKEND_URL + "/entities/").then(this.fillEntities);
+      await axios.get(import.meta.env.VITE_APP_BACKEND_URL + "/entities/").then(function(res){
+        // cache full list
+        // fillEntities kept for compatibility
+        vm = this;
+        this.allEntities = res.data;
+        this.fillEntities(res);
+      }.bind(this));
     },
     async getAccountCredentialTypes(entity_id) {
       this.entity_credentials = [];

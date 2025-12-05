@@ -1,0 +1,33 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Attach to backend-dev (debugpy)",
+      "type": "python",
+      "request": "attach",
+      "host": "localhost",
+      "port": 5678,
+      "pathMappings": [
+        {
+          "localRoot": "${workspaceFolder}/app",
+          "remoteRoot": "/usr/src"
+        }
+      ],
+      "justMyCode": true
+    },
+    {
+      "name": "Attach to backend (Dev Container)",
+      "type": "python",
+      "request": "attach",
+      "host": "localhost",
+      "port": 5678,
+      "pathMappings": [
+        {
+          "localRoot": "${workspaceFolder}/app",
+          "remoteRoot": "/workspaces/queds/app"
+        }
+      ],
+      "justMyCode": false
+    }
+  ]
+}

@@ -119,7 +119,12 @@ def initialize_app(flask_app):
 
     @app.route("/api/version")
     def version():
-        return VERSION
+        # Return the file VERSION plus a short timestamped marker so it's easy
+        # to verify hot-reload / propagation to the frontend during development.
+        try:
+            return f"{VERSION} (patched at {time.strftime('%Y-%m-%d %H:%M:%S')})"
+        except Exception:
+            return VERSION
 
     if settings.DEMO_MODE:
         log.info("Setting DEMO MODE!")

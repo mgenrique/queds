@@ -1,26 +1,16 @@
 {
-  "name": "Queds Dev",
-  "dockerComposeFile": [
-    "../docker-compose.yml",
-    "../docker-compose.dev.yml"
-  ],
-  "service": "backend-dev",
-  "workspaceFolder": "/workspace",
+  "name": "Queds Devcontainer",
+  "dockerComposeFile": ["../docker-compose.yml"],
+  "service": "devcontainer",
+  "workspaceFolder": "/workspaces/queds",
   "shutdownAction": "stopCompose",
-  "remoteUser": "vscode",
-  "postCreateCommand": "pip install -r requirements.txt",
-  "forwardPorts": [
-    8000,
-    5173
+  "forwardPorts": [5173, 8000, 5000, 15432],
+  "postStartCommand": "pip install -r /workspaces/queds/app/requirements.txt || true && cd /workspaces/queds/frontend && npm install || true",
+  "extensions": [
+    "ms-python.python",
+    "ms-vscode.vscode-node-azure-pack"
   ],
-  "customizations": {
-    "vscode": {
-      "extensions": [
-        "ms-python.python",
-        "ms-python.vscode-pylance",
-        "esbenp.prettier-vscode",
-        "dbaeumer.vscode-eslint"
-      ]
-    }
+  "settings": {
+    "terminal.integrated.shell.linux": "/bin/bash"
   }
 }

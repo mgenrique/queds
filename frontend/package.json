@@ -5,7 +5,7 @@
   "description": "Finance portfolio",
   "author": "jbatalle <jbatalle3@gmail.com>",
   "scripts": {
-    "predev": "rm -rf node_modules/.vite",
+    "predev": "rm -rf node_modules/.vite && mkdir -p node_modules/.vite && chmod -R 0777 node_modules/.vite",
     "dev": "vite --port 8080 --host 0.0.0.0",
     "build": "vite build",
     "preview": "vite preview --port 8080 --host 0.0.0.0"
