@@ -18,3 +18,6 @@ docker-compose.heroku.yml
 deploy_fly.sh
 docker-compose.local.yml
 nginx_template.local.yml
+
+#Info EMG
+_CosasEMG_gitignore/
