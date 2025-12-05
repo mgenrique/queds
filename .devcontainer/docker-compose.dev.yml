@@ -1,0 +1,38 @@
+version: "3.9"
+
+services:
+
+  backend-dev:
+    build:
+      context: .
+      dockerfile: app/Dockerfile
+    container_name: queds-backend-dev
+    volumes:
+      - ./app:/workspace
+    environment:
+      POSTGRES_HOST: postgres
+      POSTGRES_DB: queds
+      POSTGRES_USER: queds
+      POSTGRES_PASSWORD: queds
+      REDIS_HOST: redis
+      PYTHONUNBUFFERED: 1
+    command: ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+    ports:
+      - "8000:8000"
+    depends_on:
+      - postgres
+      - redis
+
+  frontend-dev:
+    build:
+      context: ./frontend
+    container_name: queds-frontend-dev
+    volumes:
+      - ./frontend:/workspace
+    command: ["npm", "run", "dev", "--", "--host"]
+    ports:
+      - "5173:5173"
+    environment:
+      VITE_API_URL: "http://backend-dev:8000"
+    depends_on:
+      - backend-dev
